@@ -21,18 +21,18 @@ public class FlowerController {
 
     // ✅ Lấy danh sách hoa theo group (category)
     @GetMapping("/group/{groupId}")
-    public List<Flower> getByGroup(@PathVariable Long groupId) {
+    public List<FlowerDTO> getByGroup(@PathVariable Long groupId) {
         return service.getByGroupId(groupId);
     }
 
     @GetMapping("/{id}")
-    public Flower getById(@PathVariable Long id) { return service.getById(id); }
+    public FlowerDTO getById(@PathVariable Long id) { return service.getById(id); }
 
     @PostMapping
-    public Flower create(@RequestBody FlowerRequest flower) { return service.create(flower); }
+    public FlowerDTO create(@RequestBody FlowerRequest flower) { return service.create(flower); }
 
     @PutMapping("/{id}")
-    public Flower update(@PathVariable Long id, @RequestBody Flower flower) {
+    public FlowerDTO update(@PathVariable Long id, @RequestBody Flower flower) {
         return service.update(id, flower);
     }
 

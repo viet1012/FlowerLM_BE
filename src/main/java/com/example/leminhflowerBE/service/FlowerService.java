@@ -20,13 +20,14 @@ public class FlowerService {
 
     private final FlowerRepository repo;
 
+    @Autowired
+    private FlowerGroupRepository flowerGroupRepository;
+
     public FlowerService(FlowerRepository repo) {
         this.repo = repo;
     }
 
-    @Autowired
-    private FlowerGroupRepository flowerGroupRepository;
-
+    // ✅ Lấy tất cả hoa
     public List<FlowerDTO> getAll() {
         return repo.findAll()
                 .stream()
@@ -34,16 +35,23 @@ public class FlowerService {
                 .collect(Collectors.toList());
     }
 
-    public List<Flower> getByGroupId(Long groupId) {
-        return repo.findByGroup_GroupId(groupId);
+    // ✅ Lấy danh sách hoa theo groupId, trả về dạng DTO
+    public List<FlowerDTO> getByGroupId(Long groupId) {
+        return repo.findByGroup_GroupId(groupId)
+                .stream()
+                .map(FlowerMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Flower getById(Long id) {
-        return repo.findById(id)
+    // ✅ Lấy 1 hoa theo ID, trả về DTO
+    public FlowerDTO getById(Long id) {
+        Flower flower = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Flower not found with id: " + id));
+        return FlowerMapper.toDTO(flower);
     }
 
-    public Flower create(FlowerRequest request) {
+    // ✅ Thêm hoa mới
+    public FlowerDTO create(FlowerRequest request) {
         FlowerGroup group = flowerGroupRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy nhóm hoa với id = " + request.getGroupId()));
 
@@ -66,29 +74,32 @@ public class FlowerService {
             }).collect(Collectors.toList()));
         }
 
-        return repo.save(flower);
+        Flower saved = repo.save(flower);
+        return FlowerMapper.toDTO(saved);
     }
 
+    // ✅ Cập nhật hoa
+    public FlowerDTO update(Long id, Flower flower) {
+        Flower existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Flower not found with id: " + id));
 
-
-    public Flower update(Long id, Flower flower) {
-        Flower existing = getById(id);
         existing.setName(flower.getName());
         existing.setLifespan(flower.getLifespan());
         existing.setOrigin(flower.getOrigin());
         existing.setDescription(flower.getDescription());
         existing.setFeature(flower.getFeature());
         existing.setMeaning(flower.getMeaning());
-        existing.setGroup(flower.getGroup()); // cập nhật group nếu có thay đổi
-        return repo.save(existing);
+        existing.setGroup(flower.getGroup());
+
+        Flower updated = repo.save(existing);
+        return FlowerMapper.toDTO(updated);
     }
 
+    // ✅ Xóa hoa
     @Transactional
     public void delete(Long id) {
         Flower flower = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hoa với id = " + id));
-
-        repo.delete(flower); // Hibernate sẽ tự xóa cả FlowerImage nếu có cascade
+        repo.delete(flower);
     }
-
 }
