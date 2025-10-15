@@ -1,5 +1,6 @@
 package com.example.leminhflowerBE.controller;
 
+import com.example.leminhflowerBE.dto.FlowerGroupDTO;
 import com.example.leminhflowerBE.model.FlowerGroup;
 import com.example.leminhflowerBE.service.FlowerGroupService;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/groups")
@@ -18,10 +20,10 @@ public class FlowerGroupController {
         this.service = service;
     }
 
-    // 🟢 Lấy tất cả nhóm hoa
+    // 🟢 Lấy tất cả nhóm hoa (trả về danh sách DTO)
     @GetMapping
     public ResponseEntity<?> getAll() {
-        List<FlowerGroup> groups = service.getAll();
+        List<FlowerGroupDTO> groups = service.getAll();
         if (groups.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body("Không có nhóm hoa nào trong hệ thống.");
@@ -29,40 +31,39 @@ public class FlowerGroupController {
         return ResponseEntity.ok(groups);
     }
 
-    // 🟡 Lấy nhóm theo ID + kèm số lượng hoa
+    // 🟡 Lấy nhóm + tổng số hoa trong nhóm
     @GetMapping("/group/{id}")
     public ResponseEntity<?> getGroupById(@PathVariable Long id) {
         try {
-            Object group = service.getGroupWithCount(id);
-            if (group == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("❌ Không tìm thấy nhóm hoa với ID = " + id);
-            }
-            return ResponseEntity.ok(group);
+            Map<String, Object> groupData = service.getGroupWithCount(id);
+            return ResponseEntity.ok(groupData);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("❌ Không tìm thấy nhóm hoa với ID = " + id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("⚠️ Lỗi khi truy vấn nhóm hoa: " + e.getMessage());
         }
     }
 
-    // 🔵 Lấy thông tin chi tiết nhóm
+    // 🔵 Lấy thông tin chi tiết nhóm (trả về DTO)
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        FlowerGroup group = service.getById(id);
-        if (group == null) {
+        try {
+            FlowerGroupDTO dto = service.getById(id);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("❌ Không tìm thấy nhóm hoa với ID = " + id);
         }
-        return ResponseEntity.ok(group);
     }
 
     // 🟢 Tạo nhóm hoa mới
     @PostMapping
     public ResponseEntity<?> create(@RequestBody FlowerGroup group) {
         try {
-            FlowerGroup created = service.create(group);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("✅ Nhóm hoa '" + created.getGroupName() + "' đã được tạo thành công!");
+            FlowerGroupDTO created = service.create(group);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("⚠️ Không thể tạo nhóm hoa: " + e.getMessage());
@@ -73,12 +74,11 @@ public class FlowerGroupController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody FlowerGroup group) {
         try {
-            FlowerGroup updated = service.update(id, group);
-            if (updated == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("❌ Không tìm thấy nhóm hoa để cập nhật (ID = " + id + ")");
-            }
-            return ResponseEntity.ok("✅ Cập nhật nhóm hoa thành công!");
+            FlowerGroupDTO updated = service.update(id, group);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("❌ Không tìm thấy nhóm hoa để cập nhật (ID = " + id + ")");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("⚠️ Lỗi khi cập nhật nhóm hoa: " + e.getMessage());

@@ -1,6 +1,5 @@
 package com.example.leminhflowerBE.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,9 +16,12 @@ public class Flower {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
-    @JsonIgnoreProperties("group") // tránh vòng lặp
+    @JsonIgnoreProperties("flowers") // tránh vòng lặp vô hạn khi serialize
     private FlowerGroup group;
+
+    @Column(nullable = false)
     private String name;
+
     private String lifespan;
     private String origin;
 
@@ -31,6 +33,10 @@ public class Flower {
 
     @Column(columnDefinition = "TEXT")
     private String meaning;
+
+    // 💰 Giá tiền
+    @Column(nullable = false)
+    private Double price;
 
     @OneToMany(mappedBy = "flower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlowerImage> images;

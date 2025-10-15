@@ -1,11 +1,13 @@
 package com.example.leminhflowerBE.service;
 
+import com.example.leminhflowerBE.dto.FlowerGroupDTO;
 import com.example.leminhflowerBE.model.FlowerGroup;
 import com.example.leminhflowerBE.repository.FlowerGroupRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class FlowerGroupService {
@@ -16,33 +18,52 @@ public class FlowerGroupService {
         this.repo = repo;
     }
 
-    public List<FlowerGroup> getAll() {
-        return repo.findAll();
+    // ✅ Lấy toàn bộ danh sách nhóm + danh sách hoa trong nhóm
+    public List<FlowerGroupDTO> getAll() {
+        return repo.findAll()
+                .stream()
+                .map(FlowerGroupDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
+    // ✅ Lấy nhóm theo ID + tổng số hoa trong nhóm
     public Map<String, Object> getGroupWithCount(Long id) {
         FlowerGroup group = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
         long count = repo.countByGroup_GroupId(id);
-        return Map.of("group", group, "flowerCount", count);
+
+        return Map.of(
+                "group", FlowerGroupDTO.fromEntity(group),
+                "flowerCount", count
+        );
     }
 
-    public FlowerGroup getById(Long id) {
-        return repo.findById(id)
+    // ✅ Lấy nhóm theo ID
+    public FlowerGroupDTO getById(Long id) {
+        FlowerGroup group = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Group not found with id: " + id));
+        return FlowerGroupDTO.fromEntity(group);
     }
 
-    public FlowerGroup create(FlowerGroup group) {
-        return repo.save(group);
+    // ✅ Tạo mới nhóm
+    public FlowerGroupDTO create(FlowerGroup group) {
+        FlowerGroup saved = repo.save(group);
+        return FlowerGroupDTO.fromEntity(saved);
     }
 
-    public FlowerGroup update(Long id, FlowerGroup group) {
-        FlowerGroup existing = getById(id);
+    // ✅ Cập nhật nhóm
+    public FlowerGroupDTO update(Long id, FlowerGroup group) {
+        FlowerGroup existing = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Group not found with id: " + id));
+
         existing.setGroupName(group.getGroupName());
         existing.setDescription(group.getDescription());
-        return repo.save(existing);
+
+        FlowerGroup updated = repo.save(existing);
+        return FlowerGroupDTO.fromEntity(updated);
     }
 
+    // ✅ Xoá nhóm
     public void delete(Long id) {
         repo.deleteById(id);
     }
