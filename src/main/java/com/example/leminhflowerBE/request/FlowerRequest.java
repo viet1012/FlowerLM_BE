@@ -13,6 +13,7 @@ public class FlowerRequest {
     private String description;
     private String feature;
     private String meaning;
+    private Double price;
     private List<ImageRequest> images;
 
     @Data

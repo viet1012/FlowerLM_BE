@@ -32,7 +32,7 @@ public class FlowerController {
     public FlowerDTO create(@RequestBody FlowerRequest flower) { return service.create(flower); }
 
     @PutMapping("/{id}")
-    public FlowerDTO update(@PathVariable Long id, @RequestBody Flower flower) {
+    public FlowerDTO update(@PathVariable Long id, @RequestBody FlowerRequest flower) {
         return service.update(id, flower);
     }
 

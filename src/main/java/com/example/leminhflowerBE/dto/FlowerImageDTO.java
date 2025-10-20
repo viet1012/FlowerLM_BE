@@ -11,4 +11,5 @@ public class FlowerImageDTO {
     private Long imageId;
     private String imageUrl;
     private String imageType;
+    private Long flowerId; // chỉ cần id thay vì object Flower
 }

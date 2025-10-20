@@ -63,15 +63,19 @@ public class FlowerService {
         flower.setDescription(request.getDescription());
         flower.setFeature(request.getFeature());
         flower.setMeaning(request.getMeaning());
+        flower.setPrice(request.getPrice());
 
         if (request.getImages() != null) {
-            flower.setImages(request.getImages().stream().map(imgReq -> {
-                FlowerImage img = new FlowerImage();
-                img.setFlower(flower);
-                img.setImageUrl(imgReq.getImageUrl());
-                img.setImageType(FlowerImage.ImageType.valueOf(imgReq.getImageType()));
-                return img;
-            }).collect(Collectors.toList()));
+            flower.setImages(
+                    request.getImages().stream().map(imgReq -> {
+                        FlowerImage img = new FlowerImage();
+                        img.setFlower(flower);
+                        img.setImageUrl(imgReq.getImageUrl());
+                        img.setImageType(FlowerImage.ImageType.valueOf(imgReq.getImageType()));
+                        return img;
+                    }).collect(Collectors.toList())
+            );
+
         }
 
         Flower saved = repo.save(flower);
@@ -79,21 +83,39 @@ public class FlowerService {
     }
 
     // ✅ Cập nhật hoa
-    public FlowerDTO update(Long id, Flower flower) {
+    @Transactional
+    public FlowerDTO update(Long id, FlowerRequest request) {
         Flower existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Flower not found with id: " + id));
 
-        existing.setName(flower.getName());
-        existing.setLifespan(flower.getLifespan());
-        existing.setOrigin(flower.getOrigin());
-        existing.setDescription(flower.getDescription());
-        existing.setFeature(flower.getFeature());
-        existing.setMeaning(flower.getMeaning());
-        existing.setGroup(flower.getGroup());
+        // ✅ Chỉ update khi có giá trị mới
+        if (request.getName() != null) existing.setName(request.getName());
+        if (request.getLifespan() != null) existing.setLifespan(request.getLifespan());
+        if (request.getOrigin() != null) existing.setOrigin(request.getOrigin());
+        if (request.getDescription() != null) existing.setDescription(request.getDescription());
+        if (request.getFeature() != null) existing.setFeature(request.getFeature());
+        if (request.getMeaning() != null) existing.setMeaning(request.getMeaning());
+        if (request.getPrice() != null) existing.setPrice(request.getPrice());
+
+        // ✅ Cập nhật ảnh (nếu có gửi trong request)
+        if (request.getImages() != null) {
+            existing.getImages().clear();
+            existing.getImages().addAll(
+                    request.getImages().stream().map(imgReq -> {
+                        FlowerImage img = new FlowerImage();
+                        img.setFlower(existing);
+                        img.setImageUrl(imgReq.getImageUrl());
+                        img.setImageType(FlowerImage.ImageType.valueOf(imgReq.getImageType()));
+                        return img;
+                    }).toList()
+            );
+        }
 
         Flower updated = repo.save(existing);
         return FlowerMapper.toDTO(updated);
     }
+
+
 
     // ✅ Xóa hoa
     @Transactional

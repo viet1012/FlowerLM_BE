@@ -21,7 +21,7 @@ public class FlowerMapper {
         if (flower.getImages() != null) {
             dto.setImages(
                     flower.getImages().stream()
-                            .map(img -> new FlowerImageDTO(img.getImageId(), img.getImageUrl(), img.getImageType().name()))
+                            .map(img -> new FlowerImageDTO(img.getImageId(), img.getImageUrl(), img.getImageType().name(), img.getFlower().getFlowerId()))
                             .collect(Collectors.toList())
             );
         }
