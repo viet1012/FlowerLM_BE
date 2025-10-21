@@ -11,8 +11,10 @@ import com.example.leminhflowerBE.request.FlowerRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +52,47 @@ public class FlowerService {
         return FlowerMapper.toDTO(flower);
     }
 
+    /**
+     * ✅ Thêm nhiều hoa cùng lúc
+     */
+    @Transactional
+    public List<FlowerDTO> createMultiple(List<FlowerRequest> requests) {
+        List<Flower> flowersToSave = new ArrayList<>();
+
+        for (FlowerRequest request : requests) {
+            FlowerGroup group = flowerGroupRepository.findById(request.getGroupId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhóm hoa với id = " + request.getGroupId()));
+
+            Flower flower = new Flower();
+            flower.setGroup(group);
+            flower.setName(request.getName());
+            flower.setLifespan(request.getLifespan());
+            flower.setOrigin(request.getOrigin());
+            flower.setDescription(request.getDescription());
+            flower.setFeature(request.getFeature());
+            flower.setMeaning(request.getMeaning());
+            flower.setPrice(request.getPrice());
+
+            if (request.getImages() != null) {
+                flower.setImages(
+                        request.getImages().stream().map(imgReq -> {
+                            FlowerImage img = new FlowerImage();
+                            img.setFlower(flower);
+                            img.setImageUrl(imgReq.getImageUrl());
+                            img.setImageType(FlowerImage.ImageType.valueOf(imgReq.getImageType()));
+                            return img;
+                        }).collect(Collectors.toList())
+                );
+            }
+
+            flowersToSave.add(flower);
+        }
+
+        List<Flower> savedList = repo.saveAll(flowersToSave);
+        return savedList.stream()
+                .map(FlowerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
     // ✅ Thêm hoa mới
     public FlowerDTO create(FlowerRequest request) {
         FlowerGroup group = flowerGroupRepository.findById(request.getGroupId())
@@ -115,7 +158,36 @@ public class FlowerService {
         return FlowerMapper.toDTO(updated);
     }
 
+    /**
+     * ✅ Lấy ngẫu nhiên N bông hoa (random list)
+     */
+    public List<FlowerDTO> getRandomFlowers(int count) {
+        List<Flower> allFlowers = repo.findAll();
 
+        if (allFlowers.isEmpty()) {
+            throw new RuntimeException("Không có hoa nào trong cơ sở dữ liệu!");
+        }
+
+        // Xáo trộn danh sách
+        Collections.shuffle(allFlowers, new Random());
+
+        // Giới hạn số lượng trả về
+        int limit = Math.min(count, allFlowers.size());
+
+        return allFlowers.stream()
+                .limit(limit)
+                .map(FlowerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public void deleteMany(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("Danh sách ID không được trống!");
+        }
+        repo.deleteAllById(ids);
+    }
 
     // ✅ Xóa hoa
     @Transactional

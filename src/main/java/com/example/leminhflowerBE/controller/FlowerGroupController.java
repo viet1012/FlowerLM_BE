@@ -1,6 +1,7 @@
 package com.example.leminhflowerBE.controller;
 
 import com.example.leminhflowerBE.dto.FlowerGroupDTO;
+import com.example.leminhflowerBE.dto.FlowerSummaryDTO;
 import com.example.leminhflowerBE.model.FlowerGroup;
 import com.example.leminhflowerBE.service.FlowerGroupService;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,14 @@ public class FlowerGroupController {
 
     public FlowerGroupController(FlowerGroupService service) {
         this.service = service;
+    }
+
+    // ✅ 1️⃣ API random danh sách hoa
+    @GetMapping("/random")
+    public ResponseEntity<List<FlowerSummaryDTO>> getRandomFlowers(
+            @RequestParam(defaultValue = "10") int count
+    ) {
+        return ResponseEntity.ok(service.getRandomFlowers(count));
     }
 
     // 🟢 Lấy tất cả nhóm hoa (trả về danh sách DTO)
