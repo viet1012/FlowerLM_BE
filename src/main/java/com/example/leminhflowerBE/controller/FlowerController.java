@@ -30,27 +30,40 @@ public class FlowerController {
         }
     }
 
-    // ✅ Lấy danh sách hoa theo group (category)
-    @GetMapping("/group/{groupId}")
-    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getByGroup(@PathVariable Long groupId) {
+
+    // ✅ Lọc hoa theo nhiều groupId
+    @GetMapping("/groups")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getByGroupIds(
+            @RequestParam List<Long> groupIds
+    ) {
         try {
-            List<FlowerDTO> flowers = service.getByGroupId(groupId);
-            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy hoa theo nhóm thành công", flowers));
+            List<FlowerDTO> flowers = service.getByGroupIds(groupIds);
+            return ResponseEntity.ok(
+                    new ApiResponse<>(true, "Lấy hoa theo nhiều nhóm thành công.", flowers)
+            );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
 
-    // ✅ Lấy hoa theo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<FlowerDTO>> getById(@PathVariable Long id) {
+
+    // ✅ Lấy nhiều hoa theo danh sách ID
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getByIds(
+            @RequestParam List<Long> ids
+    ) {
         try {
-            FlowerDTO flower = service.getById(id);
-            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy thông tin hoa thành công", flower));
+            List<FlowerDTO> flowers = service.getByIds(ids);
+            return ResponseEntity.ok(
+                    new ApiResponse<>(true, "Lấy danh sách hoa thành công.", flowers)
+            );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
+
 
     // ✅ Tạo mới nhiều hoa cùng lúc
     @PostMapping("/batch")

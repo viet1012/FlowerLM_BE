@@ -38,19 +38,30 @@ public class FlowerService {
     }
 
     // ✅ Lấy danh sách hoa theo groupId, trả về dạng DTO
-    public List<FlowerDTO> getByGroupId(Long groupId) {
-        return repo.findByGroup_GroupId(groupId)
+    public List<FlowerDTO> getByGroupIds(List<Long> groupIds) {
+        if (groupIds == null || groupIds.isEmpty()) {
+            throw new IllegalArgumentException("Danh sách groupId không được để trống!");
+        }
+
+        return repo.findByGroup_GroupIdIn(groupIds)
                 .stream()
                 .map(FlowerMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ✅ Lấy 1 hoa theo ID, trả về DTO
-    public FlowerDTO getById(Long id) {
-        Flower flower = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flower not found with id: " + id));
-        return FlowerMapper.toDTO(flower);
+
+    // ✅ Lấy nhiều hoa theo danh sách ID
+    public List<FlowerDTO> getByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("Danh sách ID không được để trống!");
+        }
+
+        return repo.findAllById(ids)
+                .stream()
+                .map(FlowerMapper::toDTO)
+                .collect(Collectors.toList());
     }
+
 
     /**
      * ✅ Thêm nhiều hoa cùng lúc
