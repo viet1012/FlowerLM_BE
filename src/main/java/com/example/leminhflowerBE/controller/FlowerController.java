@@ -1,9 +1,11 @@
 package com.example.leminhflowerBE.controller;
 
 import com.example.leminhflowerBE.dto.FlowerDTO;
+import com.example.leminhflowerBE.dto.FlowerImageDTO;
 import com.example.leminhflowerBE.request.FlowerRequest;
 import com.example.leminhflowerBE.response.ApiResponse;
 import com.example.leminhflowerBE.service.FlowerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +32,19 @@ public class FlowerController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<FlowerDTO>> getById(@PathVariable Long id) {
+        try {
+            FlowerDTO dto = service.getById(id);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy hoa thành công", dto));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(false, "Không tìm thấy ảnh với ID = " + id, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false, "Lỗi khi lấy ảnh: " + e.getMessage(), null));
+        }
+    }
 
     // ✅ Lọc hoa theo nhiều groupId
     @GetMapping("/groups")

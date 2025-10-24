@@ -1,6 +1,8 @@
 package com.example.leminhflowerBE.service;
 
 import com.example.leminhflowerBE.dto.FlowerDTO;
+import com.example.leminhflowerBE.dto.FlowerImageDTO;
+import com.example.leminhflowerBE.mapper.FlowerImageMapper;
 import com.example.leminhflowerBE.mapper.FlowerMapper;
 import com.example.leminhflowerBE.model.Flower;
 import com.example.leminhflowerBE.model.FlowerGroup;
@@ -36,6 +38,13 @@ public class FlowerService {
                 .map(FlowerMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    public FlowerDTO getById(Long id) {
+        Flower flower = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Flower not found with id: " + id));
+        return FlowerMapper.toDTO(flower);
+    }
+
 
     // ✅ Lấy danh sách hoa theo groupId, trả về dạng DTO
     public List<FlowerDTO> getByGroupIds(List<Long> groupIds) {
