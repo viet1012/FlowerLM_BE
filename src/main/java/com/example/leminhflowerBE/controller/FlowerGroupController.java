@@ -105,7 +105,16 @@ public class FlowerGroupController {
                     .body(new ApiResponse<>(false, "Lỗi khi cập nhật nhóm hoa: " + e.getMessage(), null));
         }
     }
-
+    @DeleteMapping()
+    public ResponseEntity<ApiResponse<String>> deleteAll() {
+        try {
+            service.deleteAll();
+            return ResponseEntity.ok(new ApiResponse<>(true, "Đã xóa nhóm hoa có ID = ", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false, "Không thể xóa nhóm hoa: " + e.getMessage(), null));
+        }
+    }
     // 🔴 Xóa nhóm hoa
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {

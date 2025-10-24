@@ -35,7 +35,6 @@ public class Flower {
     private String meaning;
 
     // 💰 Giá tiền
-    @Column(nullable = false)
     private Double price;
 
     @OneToMany(mappedBy = "flower", cascade = CascadeType.ALL, orphanRemoval = true)

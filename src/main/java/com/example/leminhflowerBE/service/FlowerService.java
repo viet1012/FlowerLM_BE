@@ -193,6 +193,11 @@ public class FlowerService {
 
 
     @Transactional
+    public void deleteAll() {
+        repo.deleteAll();
+    }
+
+    @Transactional
     public void deleteMany(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new IllegalArgumentException("Danh sách ID không được trống!");

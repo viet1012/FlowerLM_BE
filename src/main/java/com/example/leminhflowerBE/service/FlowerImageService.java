@@ -29,6 +29,13 @@ public class FlowerImageService {
                 .collect(Collectors.toList());
     }
 
+    public List<FlowerImageDTO> getByFlowerId(Long flowerId) {
+        return repo.findByFlower_FlowerId(flowerId)
+                .stream()
+                .map(FlowerImageMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public FlowerImageDTO getById(Long id) {
         FlowerImage image = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Image not found with id: " + id));

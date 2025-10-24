@@ -168,6 +168,11 @@ public class FlowerGroupService {
     }
 
     // ✅ Xoá nhóm
+    public void deleteAll() {
+        repo.deleteAll();
+    }
+
+    // ✅ Xoá nhóm
     public void delete(Long id) {
         if (!repo.existsById(id)) {
             throw new RuntimeException("❌ Cannot delete — group not found with id: " + id);

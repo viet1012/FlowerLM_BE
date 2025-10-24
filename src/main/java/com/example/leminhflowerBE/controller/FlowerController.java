@@ -107,6 +107,15 @@ public class FlowerController {
             return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
+    @DeleteMapping("/all")
+    public ResponseEntity<ApiResponse<String>> deleteAll() {
+        try {
+            service.deleteAll();
+            return ResponseEntity.ok(new ApiResponse<>(true, "Đã xoá tất cả các hoa.", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
+        }
+    }
 
     // ✅ Xoá nhiều hoa cùng lúc
     @DeleteMapping("/many")

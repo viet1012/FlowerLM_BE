@@ -30,7 +30,20 @@ public class FlowerImageController {
                     .body(new ApiResponse<>(false, "Lỗi khi lấy danh sách ảnh: " + e.getMessage(), null));
         }
     }
-
+    // 🟡 Lấy ảnh theo ID
+    @GetMapping("/byFlower/{id}")
+    public ResponseEntity<ApiResponse<List<FlowerImageDTO>>> getByFlowerId(@PathVariable Long id) {
+        try {
+            List<FlowerImageDTO> dto = service.getByFlowerId(id);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy ảnh thành công", dto));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>(false, "Không tìm thấy ảnh với FlowerID = " + id, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false, "Lỗi khi lấy ảnh: " + e.getMessage(), null));
+        }
+    }
     // 🟡 Lấy ảnh theo ID
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<FlowerImageDTO>> getById(@PathVariable Long id) {
