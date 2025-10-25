@@ -1,40 +1,28 @@
 package com.example.leminhflowerBE.dto;
 
-import com.example.leminhflowerBE.mapper.FlowerMapper;
+
 import com.example.leminhflowerBE.model.FlowerGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FlowerGroupDTO {
+public class FlowerGroupCountDTO {
     private Long groupId;
     private String groupName;
     private String description;
     private String image;
-    private List<FlowerSummaryDTO> flowers;
+    private long flowerCount;
 
-    public static FlowerGroupDTO fromEntity(FlowerGroup group) {
-        FlowerGroupDTO dto = new FlowerGroupDTO();
+    public static FlowerGroupCountDTO fromEntity(FlowerGroup group) {
+        FlowerGroupCountDTO dto = new FlowerGroupCountDTO();
         dto.setGroupId(group.getGroupId());
         dto.setGroupName(group.getGroupName());
         dto.setDescription(group.getDescription());
         dto.setImage(group.getImage());
-
-        if (group.getFlowers() != null) {
-            dto.setFlowers(group.getFlowers().stream()
-                    .map(FlowerMapper::toSummaryDTO)
-                    .collect(Collectors.toList()));
-
-        }
-
+        dto.setFlowerCount(group.getFlowers() != null ? group.getFlowers().size() : 0);
         return dto;
     }
-
-
 }

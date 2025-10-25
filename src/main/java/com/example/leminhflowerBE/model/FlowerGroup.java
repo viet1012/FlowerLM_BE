@@ -20,6 +20,9 @@ public class FlowerGroup {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(length = 255)
+    private String image;
+
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("group")
     private List<Flower> flowers;

@@ -1,5 +1,6 @@
 package com.example.leminhflowerBE.service;
 
+import com.example.leminhflowerBE.dto.FlowerGroupCountDTO;
 import com.example.leminhflowerBE.dto.FlowerGroupDTO;
 import com.example.leminhflowerBE.dto.FlowerImageDTO;
 import com.example.leminhflowerBE.dto.FlowerSummaryDTO;
@@ -108,6 +109,14 @@ public class FlowerGroupService {
         return result;
     }
 
+    // ✅ Lấy danh sách nhóm + tổng số hoa (không trả list hoa chi tiết)
+    public List<FlowerGroupCountDTO> getAllWithCount() {
+        return Optional.of(repo.findAll())
+                .orElse(List.of())
+                .stream()
+                .map(FlowerGroupCountDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 
 
     // ✅ Lấy toàn bộ danh sách nhóm + danh sách hoa trong nhóm

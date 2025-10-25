@@ -1,5 +1,6 @@
 package com.example.leminhflowerBE.controller;
 
+import com.example.leminhflowerBE.dto.FlowerGroupCountDTO;
 import com.example.leminhflowerBE.dto.FlowerGroupDTO;
 import com.example.leminhflowerBE.dto.FlowerSummaryDTO;
 import com.example.leminhflowerBE.model.FlowerGroup;
@@ -33,6 +34,19 @@ public class FlowerGroupController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse<>(false, "Lỗi khi lấy hoa ngẫu nhiên: " + e.getMessage(), null));
+        }
+    }
+    @GetMapping("/count")
+    public ResponseEntity<ApiResponse<List<FlowerGroupCountDTO>>> getAllGroupsWithCount() {
+        try {
+            List<FlowerGroupCountDTO> groups = service.getAllWithCount();
+            if (groups.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse<>(true, "Không có nhóm hoa nào trong hệ thống", groups));
+            }
+            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy danh sách nhóm hoa thành công", groups));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, "Lỗi khi lấy danh sách nhóm hoa: " + e.getMessage(), null));
         }
     }
 
