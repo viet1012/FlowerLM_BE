@@ -71,6 +71,45 @@ public class FlowerService {
                 .collect(Collectors.toList());
     }
 
+    public List<FlowerDTO> filterFlowers(String name, Long groupId, String origin, String lifespan,
+                                         Double priceMin, Double priceMax) {
+        List<Flower> flowers = repo.filterFlowers(name, groupId, origin, lifespan, priceMin, priceMax);
+        return flowers.stream().map(FlowerMapper::toDTO).collect(Collectors.toList());
+    }
+
+    // ✅ 4 hoa hôm nay
+    public List<FlowerDTO> getTodayFlowers() {
+        return getFlowersInRange(0, 4);
+    }
+
+    // ✅ 4 hoa bán chạy (bỏ qua 4 đầu)
+    public List<FlowerDTO> getTopSellerFlowers() {
+        return getFlowersInRange(4, 8);
+    }
+
+    // ✅ 8 hoa nổi bật (bỏ qua 8 đầu)
+    public List<FlowerDTO> getFeaturedFlowers() {
+        return getFlowersInRange(8, 16);
+    }
+
+    // 🔹 Hàm xử lý cắt danh sách, nếu thiếu thì quay vòng
+    private List<FlowerDTO> getFlowersInRange(int start, int end) {
+        List<Flower> all = repo.findAll();
+
+        if (all.isEmpty()) return new ArrayList<>();
+
+        List<Flower> result = new ArrayList<>();
+        int total = all.size();
+
+        for (int i = start; i < end; i++) {
+            result.add(all.get(i % total)); // dùng % để lặp lại nếu thiếu
+        }
+
+        return result.stream()
+                .map(FlowerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
 
     /**
      * ✅ Thêm nhiều hoa cùng lúc

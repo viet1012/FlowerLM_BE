@@ -21,6 +21,19 @@ public class FlowerController {
         this.service = service;
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> filterFlowers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long groupId,
+            @RequestParam(required = false) String origin,
+            @RequestParam(required = false) String lifespan,
+            @RequestParam(required = false) Double priceMin,
+            @RequestParam(required = false) Double priceMax
+    ) {
+        List<FlowerDTO> flowers =service.filterFlowers(name, groupId, origin, lifespan, priceMin, priceMax);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Lấy danh sách hoa thành công", flowers));
+    }
+
     // ✅ Lấy toàn bộ danh sách hoa
     @GetMapping
     public ResponseEntity<ApiResponse<List<FlowerDTO>>> getAll() {
@@ -107,6 +120,38 @@ public class FlowerController {
         try {
             FlowerDTO updated = service.update(id, flower);
             return ResponseEntity.ok(new ApiResponse<>(true, "Cập nhật hoa thành công", updated));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
+        }
+    }
+    // ✅ 4 hoa hôm nay
+    @GetMapping("/today")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getTodayFlowers() {
+        try {
+            List<FlowerDTO> list = service.getTodayFlowers();
+            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy 4 hoa hôm nay thành công", list));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
+        }
+    }
+
+    // ✅ 4 hoa bán chạy
+    @GetMapping("/top-seller")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getTopSellerFlowers() {
+        try {
+            List<FlowerDTO> list = service.getTopSellerFlowers();
+            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy 4 hoa bán chạy thành công", list));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
+        }
+    }
+
+    // ✅ 8 hoa nổi bật
+    @GetMapping("/featured")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getFeaturedFlowers() {
+        try {
+            List<FlowerDTO> list = service.getFeaturedFlowers();
+            return ResponseEntity.ok(new ApiResponse<>(true, "Lấy 8 hoa nổi bật thành công", list));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
         }
