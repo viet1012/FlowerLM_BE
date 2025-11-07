@@ -39,4 +39,8 @@ public class Flower {
 
     @OneToMany(mappedBy = "flower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlowerImage> images;
+
+    @Column(columnDefinition = "TEXT")
+    private String flag;
+
 }

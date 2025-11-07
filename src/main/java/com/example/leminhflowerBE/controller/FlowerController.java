@@ -167,6 +167,43 @@ public class FlowerController {
             return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
+
+    // ✅ Lọc hoa theo flag (ví dụ: /api/flowers/flag?flag=hot)
+    @GetMapping("/flag")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getByFlag(
+            @RequestParam(required = false) String flag
+    ) {
+        try {
+            List<FlowerDTO> flowers = service.getByFlag(flag);
+            String message = (flag == null || flag.isEmpty())
+                    ? "Lấy tất cả hoa thành công"
+                    : "Lấy hoa theo flag = " + flag + " thành công";
+            return ResponseEntity.ok(new ApiResponse<>(true, message, flowers));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Lỗi khi lọc hoa theo flag: " + e.getMessage(), null));
+        }
+    }
+
+    // ✅ Lấy ngẫu nhiên N hoa theo flag (ví dụ: /api/flowers/random-by-flag?flag=new&count=4)
+    @GetMapping("/random-by-flag")
+    public ResponseEntity<ApiResponse<List<FlowerDTO>>> getRandomByFlag(
+            @RequestParam(required = false) String flag,
+            @RequestParam(defaultValue = "4") int count
+    ) {
+        try {
+            List<FlowerDTO> flowers = service.getRandomByFlag(flag, count);
+            String message = (flag == null || flag.isEmpty())
+                    ? "Lấy ngẫu nhiên " + count + " hoa thành công"
+                    : "Lấy ngẫu nhiên " + count + " hoa với flag = " + flag + " thành công";
+            return ResponseEntity.ok(new ApiResponse<>(true, message, flowers));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Lỗi khi lấy ngẫu nhiên hoa theo flag: " + e.getMessage(), null));
+        }
+    }
+
+
     @DeleteMapping("/all")
     public ResponseEntity<ApiResponse<String>> deleteAll() {
         try {
@@ -198,4 +235,7 @@ public class FlowerController {
             return ResponseEntity.badRequest().body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
+
+
+
 }

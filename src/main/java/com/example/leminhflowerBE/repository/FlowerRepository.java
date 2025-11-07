@@ -29,4 +29,6 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
             @Param("priceMin") Double priceMin,
             @Param("priceMax") Double priceMax
     );
+
+    List<Flower> findByFlag(String flag);
 }

@@ -14,6 +14,7 @@ public class FlowerRequest {
     private String feature;
     private String meaning;
     private Double price;
+    private String flag;
     private List<ImageRequest> images;
 
     @Data

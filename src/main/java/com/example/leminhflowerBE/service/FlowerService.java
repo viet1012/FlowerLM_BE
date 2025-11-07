@@ -131,7 +131,7 @@ public class FlowerService {
             flower.setFeature(request.getFeature());
             flower.setMeaning(request.getMeaning());
             flower.setPrice(request.getPrice());
-
+            flower.setFlag(request.getFlag());
             if (request.getImages() != null) {
                 flower.setImages(
                         request.getImages().stream().map(imgReq -> {
@@ -166,6 +166,7 @@ public class FlowerService {
         flower.setFeature(request.getFeature());
         flower.setMeaning(request.getMeaning());
         flower.setPrice(request.getPrice());
+        flower.setFlag(request.getFlag());
 
         if (request.getImages() != null) {
             flower.setImages(
@@ -198,6 +199,7 @@ public class FlowerService {
         if (request.getFeature() != null) existing.setFeature(request.getFeature());
         if (request.getMeaning() != null) existing.setMeaning(request.getMeaning());
         if (request.getPrice() != null) existing.setPrice(request.getPrice());
+        if (request.getFlag() != null) existing.setFlag(request.getFlag());
 
         // ✅ Cập nhật ảnh (nếu có gửi trong request)
         if (request.getImages() != null) {
@@ -239,6 +241,46 @@ public class FlowerService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * ✅ Lọc hoa theo flag (ví dụ: "hot", "new", "featured"...)
+     * Nếu không truyền flag => trả về tất cả hoa
+     */
+    public List<FlowerDTO> getByFlag(String flag) {
+        List<Flower> flowers;
+
+        if (flag == null || flag.trim().isEmpty()) {
+            flowers = repo.findAll();
+        } else {
+            flowers = repo.findByFlag(flag);
+        }
+
+        return flowers.stream()
+                .map(FlowerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * ✅ Lấy ngẫu nhiên N hoa theo flag (ví dụ: "hot", "new")
+     */
+    public List<FlowerDTO> getRandomByFlag(String flag, int count) {
+        List<Flower> flowers;
+
+        if (flag == null || flag.trim().isEmpty()) {
+            flowers = repo.findAll();
+        } else {
+            flowers = repo.findByFlag(flag);
+        }
+
+        if (flowers.isEmpty()) {
+            throw new RuntimeException("Không có hoa nào với flag = " + flag);
+        }
+
+        Collections.shuffle(flowers, new Random());
+        return flowers.stream()
+                .limit(Math.min(count, flowers.size()))
+                .map(FlowerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public void deleteAll() {
