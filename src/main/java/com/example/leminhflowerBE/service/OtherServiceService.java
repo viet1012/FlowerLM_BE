@@ -1,11 +1,13 @@
-package com.example.leminhflowerBE.service;
+package com.example.leminhflowerBE.service;// 📁 package com.example.leminhflowerBE.service
 
+import com.example.leminhflowerBE.dto.OtherServiceDTO;
 import com.example.leminhflowerBE.model.OtherService;
+import com.example.leminhflowerBE.model.OtherServiceImage;
 import com.example.leminhflowerBE.repository.OtherServiceRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OtherServiceService {
@@ -16,79 +18,84 @@ public class OtherServiceService {
         this.repository = repository;
     }
 
-    // 🔹 Lấy tất cả dịch vụ
-    public List<OtherService> getAll() {
-        return repository.findAll();
+    // 🔹 Chuyển từ entity sang DTO
+    private OtherServiceDTO convertToDTO(OtherService entity) {
+        OtherServiceDTO dto = new OtherServiceDTO();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setDescription(entity.getDescription());
+        dto.setType(entity.getType());
+        if (entity.getImages() != null) {
+            dto.setImages(
+                    entity.getImages().stream()
+                            .map(OtherServiceImage::getImageUrl)
+                            .collect(Collectors.toList())
+            );
+        }
+        return dto;
     }
 
-    // 🔹 Tìm theo ID
-    public Optional<OtherService> getById(Long id) {
-        return repository.findById(id);
+    // 🔹 Tạo mới
+    public OtherServiceDTO create(OtherServiceDTO dto) {
+        OtherService service = new OtherService();
+        service.setTitle(dto.getTitle());
+        service.setDescription(dto.getDescription());
+        service.setType(dto.getType());
+
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            service.setImages(dto.getImages().stream()
+                    .map(url -> {
+                        OtherServiceImage img = new OtherServiceImage();
+                        img.setImageUrl(url);
+                        img.setService(service);
+                        return img;
+                    })
+                    .collect(Collectors.toList()));
+        }
+
+        return convertToDTO(repository.save(service));
     }
 
-    // 🔹 Tìm theo loại (type)
-    public List<OtherService> getByType(String type) {
-        return repository.findByTypeIgnoreCase(type);
+    // 🔹 Lấy tất cả
+    public List<OtherServiceDTO> getAll() {
+        return repository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    // 🔹 Tìm theo tiêu đề chính xác
-    public List<OtherService> getByTitle(String title) {
-        return repository.findByTitleIgnoreCase(title);
+    // 🔹 Lấy theo ID
+    public OtherServiceDTO getById(Long id) {
+        return repository.findById(id)
+                .map(this::convertToDTO)
+                .orElse(null);
     }
 
-    // 🔹 Tìm theo tiêu đề gần đúng (LIKE)
-    public List<OtherService> searchByTitle(String keyword) {
-        return repository.findByTitleContainingIgnoreCase(keyword);
+    // 🔹 Cập nhật
+    public OtherServiceDTO update(Long id, OtherServiceDTO dto) {
+        Optional<OtherService> optional = repository.findById(id);
+        if (optional.isEmpty()) return null;
+
+        OtherService existing = optional.get();
+        existing.setTitle(dto.getTitle());
+        existing.setDescription(dto.getDescription());
+        existing.setType(dto.getType());
+
+        // 🔄 Cập nhật danh sách ảnh (nếu có)
+        if (dto.getImages() != null) {
+            existing.getImages().clear();
+            dto.getImages().forEach(url -> {
+                OtherServiceImage img = new OtherServiceImage();
+                img.setImageUrl(url);
+                img.setService(existing);
+                existing.getImages().add(img);
+            });
+        }
+
+        return convertToDTO(repository.save(existing));
     }
 
-    // 🔹 Tìm theo mô tả chứa từ khóa
-    public List<OtherService> searchByDescription(String keyword) {
-        return repository.findByDescriptionContainingIgnoreCase(keyword);
-    }
-
-    // 🟢 Thêm 1 dịch vụ
-    public OtherService create(OtherService service) {
-        return repository.save(service);
-    }
-
-    // 🟢 Thêm nhiều dịch vụ
-    public List<OtherService> createBatch(List<OtherService> services) {
-        return repository.saveAll(services);
-    }
-
-    // 🟠 Cập nhật 1 dịch vụ
-    public OtherService update(Long id, OtherService updated) {
-        Optional<OtherService> optionalExisting = repository.findById(id);
-        if (optionalExisting.isEmpty()) return null;
-
-        OtherService existing = optionalExisting.get();
-        existing.setTitle(updated.getTitle());
-        existing.setDescription(updated.getDescription());
-        existing.setType(updated.getType());
-        existing.setImages(updated.getImages());
-
-        return repository.save(existing);
-    }
-
-    // 🟠 Cập nhật nhiều dịch vụ
-    public List<OtherService> updateBatch(List<OtherService> services) {
-        return repository.saveAll(services);
-    }
-
-    // 🔴 Xóa 1 dịch vụ
-    public boolean delete(Long id) {
-        if (!repository.existsById(id)) return false;
+    // 🔹 Xóa theo ID
+    public void delete(Long id) {
         repository.deleteById(id);
-        return true;
-    }
-
-    // 🔴 Xóa nhiều dịch vụ
-    public void deleteBatch(List<Long> ids) {
-        ids.forEach(repository::deleteById);
-    }
-
-    // 🔴 Xóa tất cả
-    public void deleteAll() {
-        repository.deleteAll();
     }
 }
