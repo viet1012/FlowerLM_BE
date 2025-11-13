@@ -70,6 +70,13 @@ public class OtherServiceService {
                 .orElse(null);
     }
 
+    // 🔹 Lấy theo TYPE
+    public List<OtherServiceDTO> getByType(String type) {
+        return repository.findByTypeIgnoreCase(type).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     // 🔹 Cập nhật
     public OtherServiceDTO update(Long id, OtherServiceDTO dto) {
         Optional<OtherService> optional = repository.findById(id);

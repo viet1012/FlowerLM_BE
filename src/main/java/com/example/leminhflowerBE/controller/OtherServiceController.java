@@ -2,6 +2,7 @@ package com.example.leminhflowerBE.controller;// 📁 package com.example.leminh
 
 import com.example.leminhflowerBE.dto.OtherServiceDTO;
 import com.example.leminhflowerBE.service.OtherServiceService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -24,6 +25,13 @@ public class OtherServiceController {
     @GetMapping("/{id}")
     public OtherServiceDTO getById(@PathVariable Long id) {
         return service.getById(id);
+    }
+    // ✅ API tìm theo type
+
+    @GetMapping("/type/{type}")
+    public ResponseEntity<List<OtherServiceDTO>> getByType(@PathVariable String type) {
+        List<OtherServiceDTO> services = service.getByType(type);
+        return ResponseEntity.ok(services);
     }
 
     @PostMapping
