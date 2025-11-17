@@ -79,15 +79,21 @@ public class OtherServiceService {
 
     // 🔹 Cập nhật
     public OtherServiceDTO update(Long id, OtherServiceDTO dto) {
-        Optional<OtherService> optional = repository.findById(id);
-        if (optional.isEmpty()) return null;
+        OtherService existing = repository.findById(id).orElse(null);
+        if (existing == null) return null;
 
-        OtherService existing = optional.get();
-        existing.setTitle(dto.getTitle());
-        existing.setDescription(dto.getDescription());
-        existing.setType(dto.getType());
+        // ✏️ Chỉ cập nhật nếu DTO có gửi lên
+        if (dto.getTitle() != null) {
+            existing.setTitle(dto.getTitle());
+        }
+        if (dto.getDescription() != null) {
+            existing.setDescription(dto.getDescription());
+        }
+        if (dto.getType() != null) {
+            existing.setType(dto.getType());
+        }
 
-        // 🔄 Cập nhật danh sách ảnh (nếu có)
+        // 🔄 Cập nhật ảnh (chỉ khi client gửi images lên)
         if (dto.getImages() != null) {
             existing.getImages().clear();
             dto.getImages().forEach(url -> {
@@ -100,6 +106,7 @@ public class OtherServiceService {
 
         return convertToDTO(repository.save(existing));
     }
+
 
     // 🔹 Xóa theo ID
     public void delete(Long id) {
