@@ -1,9 +1,6 @@
 package com.example.leminhflowerBE.service;
 
-import com.example.leminhflowerBE.dto.FlowerGroupCountDTO;
-import com.example.leminhflowerBE.dto.FlowerGroupDTO;
-import com.example.leminhflowerBE.dto.FlowerImageDTO;
-import com.example.leminhflowerBE.dto.FlowerSummaryDTO;
+import com.example.leminhflowerBE.dto.*;
 import com.example.leminhflowerBE.model.Flower;
 import com.example.leminhflowerBE.model.FlowerGroup;
 import com.example.leminhflowerBE.model.FlowerImage;
@@ -153,23 +150,35 @@ public class FlowerGroupService {
                 .orElseThrow(() -> new RuntimeException("❌ Group not found with id: " + id));
     }
 
-    // ✅ Tạo mới nhóm
-    public FlowerGroupDTO create(FlowerGroup group) {
-        if (group == null) throw new RuntimeException("❌ Group data cannot be null");
+    // Tạo mới nhóm không cần hoa kèm
+    public FlowerGroupDTO create(CreateFlowerGroupRequest request) {
+        if (request == null) throw new RuntimeException("❌ Group data cannot be null");
+        if (request.getGroupName() == null || request.getGroupName().isBlank()) {
+            throw new RuntimeException("❌ GroupName is required");
+        }
+
+        FlowerGroup group = new FlowerGroup();
+        group.setGroupName(request.getGroupName());
+        group.setDescription(request.getDescription());
+        group.setImage(request.getImage());
+
         FlowerGroup saved = repo.save(group);
         return FlowerGroupDTO.fromEntity(saved);
     }
 
-    // ✅ Cập nhật nhóm (nếu giá trị mới null thì giữ giá trị cũ)
-    public FlowerGroupDTO update(Long id, FlowerGroup group) {
+    // Cập nhật nhóm (giữ giá trị cũ nếu trường mới null hoặc blank)
+    public FlowerGroupDTO update(Long id, UpdateFlowerGroupRequest request) {
         FlowerGroup existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("❌ Group not found with id: " + id));
 
-        if (group.getGroupName() != null && !group.getGroupName().isBlank()) {
-            existing.setGroupName(group.getGroupName());
+        if (request.getGroupName() != null && !request.getGroupName().isBlank()) {
+            existing.setGroupName(request.getGroupName());
         }
-        if (group.getDescription() != null && !group.getDescription().isBlank()) {
-            existing.setDescription(group.getDescription());
+        if (request.getDescription() != null && !request.getDescription().isBlank()) {
+            existing.setDescription(request.getDescription());
+        }
+        if (request.getImage() != null && !request.getImage().isBlank()) {
+            existing.setImage(request.getImage());
         }
 
         FlowerGroup updated = repo.save(existing);

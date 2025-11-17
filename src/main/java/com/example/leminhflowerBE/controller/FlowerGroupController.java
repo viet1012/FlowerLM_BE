@@ -1,8 +1,6 @@
 package com.example.leminhflowerBE.controller;
 
-import com.example.leminhflowerBE.dto.FlowerGroupCountDTO;
-import com.example.leminhflowerBE.dto.FlowerGroupDTO;
-import com.example.leminhflowerBE.dto.FlowerSummaryDTO;
+import com.example.leminhflowerBE.dto.*;
 import com.example.leminhflowerBE.model.FlowerGroup;
 import com.example.leminhflowerBE.response.ApiResponse;
 import com.example.leminhflowerBE.service.FlowerGroupService;
@@ -94,7 +92,7 @@ public class FlowerGroupController {
 
     // 🟢 Tạo nhóm hoa mới
     @PostMapping
-    public ResponseEntity<ApiResponse<FlowerGroupDTO>> create(@RequestBody FlowerGroup group) {
+    public ResponseEntity<ApiResponse<FlowerGroupDTO>> create(@RequestBody CreateFlowerGroupRequest group) {
         try {
             FlowerGroupDTO created = service.create(group);
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -107,7 +105,7 @@ public class FlowerGroupController {
 
     // 🟠 Cập nhật nhóm hoa
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<FlowerGroupDTO>> update(@PathVariable Long id, @RequestBody FlowerGroup group) {
+    public ResponseEntity<ApiResponse<FlowerGroupDTO>> update(@PathVariable Long id, @RequestBody UpdateFlowerGroupRequest group) {
         try {
             FlowerGroupDTO updated = service.update(id, group);
             return ResponseEntity.ok(new ApiResponse<>(true, "Cập nhật nhóm hoa thành công", updated));
