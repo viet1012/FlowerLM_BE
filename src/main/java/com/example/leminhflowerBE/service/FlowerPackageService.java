@@ -2,6 +2,7 @@ package com.example.leminhflowerBE.service;
 
 import com.example.leminhflowerBE.dto.FlowerDTO;
 import com.example.leminhflowerBE.dto.FlowerPackageDTO;
+import com.example.leminhflowerBE.dto.FlowerPackageRequestDTO;
 import com.example.leminhflowerBE.dto.FlowerResponseDTO;
 import com.example.leminhflowerBE.model.Flower;
 import com.example.leminhflowerBE.model.FlowerPackage;
@@ -42,10 +43,18 @@ public class FlowerPackageService {
     }
 
     // Create package
-    public FlowerPackageDTO createFlowerPackage(FlowerPackage flowerPackage) {
-        FlowerPackage saved = flowerPackageRepository.save(flowerPackage);
+    public FlowerPackageDTO createFlowerPackage(FlowerPackageRequestDTO request) {
+
+        FlowerPackage entity = new FlowerPackage();
+        entity.setType(request.getType());
+        entity.setCount(request.getCount());
+        entity.setFlowers(List.of());  // khởi tạo list rỗng tránh null
+
+        FlowerPackage saved = flowerPackageRepository.save(entity);
+
         return convertToDTO(saved);
     }
+
 
     // Get all – return DTO list
     public List<FlowerPackageDTO> getAllFlowerPackages() {

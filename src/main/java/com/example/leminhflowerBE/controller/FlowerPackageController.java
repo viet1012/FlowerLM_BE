@@ -1,6 +1,7 @@
 package com.example.leminhflowerBE.controller;
 
 import com.example.leminhflowerBE.dto.FlowerPackageDTO;
+import com.example.leminhflowerBE.dto.FlowerPackageRequestDTO;
 import com.example.leminhflowerBE.model.FlowerPackage;
 import com.example.leminhflowerBE.service.FlowerPackageService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class FlowerPackageController {
     // Create package
     // -------------------
     @PostMapping
-    public ResponseEntity<FlowerPackageDTO> createPackage(@RequestBody FlowerPackage flowerPackage) {
+    public ResponseEntity<FlowerPackageDTO> createPackage(@RequestBody FlowerPackageRequestDTO flowerPackage) {
         FlowerPackageDTO created = flowerPackageService.createFlowerPackage(flowerPackage);
         return ResponseEntity.ok(created);
     }
