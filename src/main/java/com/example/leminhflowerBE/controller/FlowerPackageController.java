@@ -65,6 +65,29 @@ public class FlowerPackageController {
         }
     }
 
+
+    @PutMapping("/{packageId}")
+    public ResponseEntity<FlowerPackageDTO> updatePackage(
+            @PathVariable Long packageId,
+            @RequestBody FlowerPackageRequestDTO request) {
+        try {
+            FlowerPackageDTO dto = flowerPackageService.updateFlowerPackage(packageId, request);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+
+    @PutMapping("/{packageId}/flowers/{oldFlowerId}/replace/{newFlowerId}")
+    public ResponseEntity<FlowerPackageDTO> updateFlower(
+            @PathVariable Long packageId,
+            @PathVariable Long oldFlowerId,
+            @PathVariable Long newFlowerId) {
+
+        return ResponseEntity.ok(flowerPackageService.updateFlowerInPackage(packageId, oldFlowerId, newFlowerId));
+    }
+
     // -------------------
     // Remove flower from package
     // -------------------

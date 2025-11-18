@@ -12,5 +12,5 @@ public class FlowerPackageDTO {
     private Long id;
     private String type;
     private Integer count;
-    private List<FlowerResponseDTO> flowers;
+    private List<FlowerDTO> flowers;
 }
