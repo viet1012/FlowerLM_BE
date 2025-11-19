@@ -16,7 +16,6 @@ public class FlowerRequest {
     private Double price;
     private String flag;
     private List<ImageRequest> images;
-
     @Data
     public static class ImageRequest {
         private String imageUrl;

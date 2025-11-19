@@ -200,6 +200,13 @@ public class FlowerService {
         if (request.getMeaning() != null) existing.setMeaning(request.getMeaning());
         if (request.getPrice() != null) existing.setPrice(request.getPrice());
         if (request.getFlag() != null) existing.setFlag(request.getFlag());
+        if (request.getGroupId() != null) {
+            // Lấy FlowerGroup từ DB dựa vào groupId
+            FlowerGroup group = flowerGroupRepository.findById(request.getGroupId())
+                    .orElseThrow(() -> new RuntimeException("FlowerGroup not found with id: " + request.getGroupId()));
+            existing.setGroup(group);
+        }
+
 
         // ✅ Cập nhật ảnh (nếu có gửi trong request)
         if (request.getImages() != null) {

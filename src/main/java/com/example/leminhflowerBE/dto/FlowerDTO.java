@@ -18,5 +18,6 @@ public class FlowerDTO {
     private String feature;
     private String meaning;
     private String groupName; // thay vì trả toàn bộ group object
+    private Long groupId;
     private List<FlowerImageDTO> images;
 }

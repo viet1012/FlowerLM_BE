@@ -21,7 +21,7 @@ public class FlowerMapper {
         dto.setFeature(flower.getFeature());
         dto.setMeaning(flower.getMeaning());
         dto.setGroupName(flower.getGroup() != null ? flower.getGroup().getGroupName() : null);
-
+        dto.setGroupId(flower.getGroup() != null ? flower.getGroup().getGroupId() : null);
         if (flower.getImages() != null) {
             dto.setImages(
                     flower.getImages().stream()

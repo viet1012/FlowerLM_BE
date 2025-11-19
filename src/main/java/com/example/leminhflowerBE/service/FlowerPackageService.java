@@ -37,7 +37,8 @@ public class FlowerPackageService {
                                         f.getDescription(),            // description
                                         f.getFeature(),                // feature
                                         f.getMeaning(),                // meaning
-                                        f.getGroup() != null ? f.getGroup().getGroupName() : null,   // groupName
+                                        f.getGroup() != null ? f.getGroup().getGroupName() : null,
+                                        f.getGroup() != null ? f.getGroup().getGroupId() : null,   // groupName
                                         f.getImages().stream()
                                                 .map(img -> new FlowerImageDTO(
                                                         img.getImageId(),
