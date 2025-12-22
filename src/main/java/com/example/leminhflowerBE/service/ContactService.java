@@ -28,6 +28,9 @@ public class ContactService {
         contact.setLinkAddress(dto.getLinkAddress());
         contact.setContact1(dto.getContact1());
         contact.setContact2(dto.getContact2());
+        contact.setContact3(dto.getContact3());
+        contact.setContact4(dto.getContact4());
+
         contact.setEmail(dto.getEmail());
         return repository.save(contact);
     }
@@ -41,6 +44,9 @@ public class ContactService {
         if (dto.getLinkAddress() != null) existing.setLinkAddress(dto.getLinkAddress());
         if (dto.getContact1() != null) existing.setContact1(dto.getContact1());
         if (dto.getContact2() != null) existing.setContact2(dto.getContact2());
+        if (dto.getContact3() != null) existing.setContact2(dto.getContact3());
+        if (dto.getContact4() != null) existing.setContact2(dto.getContact4());
+
         if (dto.getEmail() != null) existing.setEmail(dto.getEmail());
 
         return repository.save(existing);
